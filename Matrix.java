@@ -42,8 +42,21 @@ public class Matrix {
   }
   
  public String toString() {
-   String output = Arrays.deepToString(this.rows);
+   double[][] temp = this.getMatrix();
+   int row = this.getRow();
+   int col = this.getCol();
+   for (int i=0;i<row;i++) {
+     for (int j=0;j<col;j++) {
+      System.out.print(" " + temp[i][j]); 
+     }
+     System.out.println();
+   }
+  String output = Arrays.deepToString(this.rows);
    return output;
+   
+   // 1 2 3
+   // 4 5 6
+   
   }
   
 }

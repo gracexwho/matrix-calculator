@@ -88,16 +88,20 @@ public class MatrixCalculator {
   public static void command(Matrix A, Matrix B) {
     //different cases of commands, very stringent
     System.out.println("Possible calculations:");
-    
-   String command = in.nextLine();
-   System.out.println(command);
+   
+   boolean validInput = false;
+   while (validInput==false) {
+     System.out.println("Please enter a valid input.");
+     String command = in.nextLine();
+     System.out.println(command);
+   
    switch(command) {
-     
      case "A+B":
        if (A.getRow() != B.getRow() || A.getCol() != B.getCol()) {
       break; 
      }
        add(A, B);
+       validInput = true;
        break;
        
      case "A-B":
@@ -105,6 +109,7 @@ public class MatrixCalculator {
       break; 
      }
        subtract(A, B);
+       validInput = true;
        break;
        
      case "A.B":
@@ -113,7 +118,7 @@ public class MatrixCalculator {
      }
        Matrix C3 = dotProduct(A, B);
        System.out.println(C3);
-       System.out.println("Hello");
+       validInput = true;
        break;
        
        case "B.A":
@@ -122,6 +127,7 @@ public class MatrixCalculator {
      }
        Matrix C4 = dotProduct(B, A);
        System.out.println(C4);
+       validInput = true;
        break;
        
        
@@ -130,19 +136,24 @@ public class MatrixCalculator {
       break; 
      }
        crossProduct(A,B);
+       validInput = true;
        break;
        
      case "sA":
-     case "sB":
        System.out.println("Enter the scalar");
-       int s = in.nextInt();
+       double s = in.nextInt();
        scalarMult(A,s);
+       validInput = true;
        break;
        
      case "row reduce A":
        rowReduce(A);
+       validInput = true;
        break;
-     
+       
+     default: break;
+   }
+   
    }
   }
   
@@ -190,10 +201,8 @@ public class MatrixCalculator {
     for (int i=0;i<a[0].length;i++) {
       
       for (int j=0;i<b.length;j++) {
-       c[i][j] = a[i][j]*b[j][i];
-        
+       c[i][j] = a[i][j]*b[j][i];  
       }
-      
     }
     Matrix C = new Matrix(c);
     System.out.println(C);
@@ -205,9 +214,18 @@ public class MatrixCalculator {
     
   }
   
-  public static void scalarMult(Matrix A, double s) {
+  public static Matrix scalarMult(Matrix A, double s) {
+    double[][] a = A.getMatrix();
+    double[][] c = new double[a.length][a[0].length];
     
-    
+     for (int i=0;i<a.length;i++) {
+      for (int j=0;j<a[0].length;j++) {
+       c[i][j] = a[i][j]*s;
+      }
+    }
+    Matrix C = new Matrix(c);
+    System.out.println(C);
+    return C;
   }
   
   public static void rowReduce(Matrix A) {
