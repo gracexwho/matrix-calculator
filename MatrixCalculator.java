@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class MatrixCalculator {
    private static Scanner in;
-   
+   // scanner to take user input
    
    public MatrixCalculator() {
     in = new Scanner(System.in); 
@@ -13,27 +13,28 @@ public class MatrixCalculator {
  
   public static void main(String[] args) {
     MatrixCalculator start = new MatrixCalculator();
-    //ok so this creates 2 matrices that you can now operate on
+    //this creates 2 matrices that you can now operate on
     Matrix[] values = enterMatrices();
     Matrix A = values[0];
     Matrix B = values[1];
     command(A,B);
     
-    
   }
   
   
   public static Matrix[] enterMatrices() {
-    //initialize scanner
-
-    
+    // very rigid input system to enter matrices to be calculated
     System.out.println("Enter the first matrix as follows: [0 0 0 0; 0 0 0 0] without the brackets");
     String m1 = in.nextLine(); //take the whole line as input
- 
+    
+    // splits input (the matrix) by rows
     String[] rows = m1.split("; ");
     if (rows.length>1) {
       for (int i=0;i<rows.length-1;i++) {
-        if (rows[i].length() != rows[i+1].length()) {
+        String[] temp1 = rows[i].split(" ");
+        String[] temp2 = rows[i+1].split(" ");
+        //checks to make sure that all the rows are the same length: i.e. contain the same amount of elements
+        if (temp1.length != temp2.length) {
          System.out.println("size of each row of the matrix must be the same!");
          m1 = in.nextLine();
          rows = m1.split("; ");
@@ -41,9 +42,9 @@ public class MatrixCalculator {
       }
       
     }
-    //so a whole long string is entered, then you split it into two rows: [0 0 0 0] [0 0 0 0]
   
-    //bc it's divided by spaces, so the number of numbers is always length/2+1
+    // so a whole long string is entered, then you split it into two rows: [0 0 0 0] [0 0 0 0]
+    // bc it's divided by spaces, so the number of numbers is always length/2+1
     
     double[][] r1 = new double[rows.length][(rows[0].length()/2+1)];
     
@@ -54,15 +55,14 @@ public class MatrixCalculator {
        r1[i][j] = Integer.parseInt(currow[j]);
       }
     }
-    System.out.println(Arrays.deepToString(r1));
+    Matrix A = new Matrix(r1);
+    System.out.println(A);
     
- 
+    
      System.out.println("Enter the second matrix as follows: [0 0 0 0; 0 0 0 0] w/o brackets");
      System.out.println("Enter 0 if there is no matrix B you need");
-      String m2 = in.nextLine();
-      
-
-  
+     String m2 = in.nextLine();
+     
     rows = m2.split("; ");
     //so a whole long string is entered, then you split it into two rows: [0 0 0 0] [0 0 0 0]
   
@@ -75,93 +75,139 @@ public class MatrixCalculator {
        r2[i][j] = Integer.parseInt(currow[j]);
       }
     }
-    System.out.println(Arrays.deepToString(r2));
      
-     Matrix A = new Matrix(r1);
+    // uses the multidimensional arrays to create new Matrix objects by calling the constructor from the Matrix class
+     
      Matrix B = new Matrix(r2);
+     System.out.println(B);
+     
      Matrix[] m = {A,B};
      return m;
     
      
   }
   
+  // The actual calculator part, which takes commands from the user
   public static void command(Matrix A, Matrix B) {
     //different cases of commands, very stringent
-    System.out.println("Possible calculations:");
-   
+    System.out.println("Possible calculations (enter the text without brackets):");
+    System.out.println("[A+B] = adds the two matrices");
+    System.out.println("[A-B] = subtracts matrix B from matrix A");
+    System.out.println("[B-A] = subtracts matrix A from matrix B");
+    System.out.println("[A*B] = computes dot product of A*B");
+    System.out.println("[B*A] = computes dot product of B*A");
+    System.out.println("[AxB] = computes cross product of AxB, must be 3D column vectors");
+    System.out.println("[sA] = computes product of scalar times A");
+    System.out.println("[row reduce A] = row reduces Matrix A");
+    System.out.println("[row reduce B] = row reduces Matrix B");
+    
+    System.out.println("If no Matrix B is necessary, then enter 0 when prompted.");
+    
+    
    boolean validInput = false;
    while (validInput==false) {
      System.out.println("Please enter a valid input.");
      String command = in.nextLine();
      System.out.println(command);
    
-   switch(command) {
-     case "A+B":
+   switch(command.toLowerCase()) {
+     case "a+b":
        if (A.getRow() != B.getRow() || A.getCol() != B.getCol()) {
+       System.out.println("Matrices A and B must be the same dimensions.");
       break; 
      }
        add(A, B);
        validInput = true;
        break;
        
-     case "A-B":
+     case "a-b":
        if (A.getRow() != B.getRow() || A.getCol() != B.getCol()) {
+       System.out.println("Matrices A and B must be the same dimensions.");
       break; 
      }
-       subtract(A, B);
+       subtract(A,B);
        validInput = true;
        break;
        
-     case "A.B":
+     case "b-a":
+       if (A.getRow() != B.getRow() || A.getCol() != B.getCol()) {
+       System.out.println("Matrices A and B must be the same dimensions.");
+      break; 
+     }
+       subtract(B,A);
+       validInput = true;
+       break;
+       
+     case "a*b":
        if (A.getCol() != B.getRow()) {
       break; 
      }
-       Matrix C3 = dotProduct(A, B);
-       System.out.println(C3);
+       multiply(A, B);
        validInput = true;
        break;
        
-       case "B.A":
+       case "b*a":
        if (B.getCol() != A.getRow()) {
       break; 
      }
-       Matrix C4 = dotProduct(B, A);
-       System.out.println(C4);
+       multiply(B, A);
        validInput = true;
        break;
+
        
        
-     case "AxB":
-       if (A.getRow() != B.getRow()) {
+     case "axb":
+       if (A.getRow() != B.getRow() && A.getCol() != B.getCol() && A.getCol() != 1 ) {
+       System.out.println("You can only do cross product on 3D column vectors.");
       break; 
      }
        crossProduct(A,B);
        validInput = true;
        break;
        
-     case "sA":
+     case "sa":
        System.out.println("Enter the scalar");
        double s = in.nextInt();
        scalarMult(A,s);
+       in.nextLine();
        validInput = true;
        break;
        
-     case "row reduce A":
+     case "row reduce a":
        rowReduce(A);
        validInput = true;
        break;
        
+     case "row reduce b":
+       rowReduce(B);
+       validInput = true;
+       break;
+       
+     case "end":
+       System.exit(0);
+       break;
+       
      default: break;
    }
+   // If the input is not valid, the program asks for another input
+   }
    
+   System.out.println("Would you like to try a different calculation? Type yes or no");
+   String user = in.nextLine();
+   
+   if (user.equals("yes")) {
+     Matrix[] values = enterMatrices();
+     Matrix X = values[0];
+     Matrix Y = values[1];
+     command(X,Y);
+   } else {
+     System.out.println("Hope you're done your math homework!");
+    System.exit(0);
    }
   }
   
   
-  
-  
   public static Matrix add(Matrix A, Matrix B) {
-
     double[][] a = A.getMatrix();
     double[][] b = B.getMatrix();
     double[][] c = new double[a.length][a[0].length];
@@ -169,18 +215,22 @@ public class MatrixCalculator {
     for (int i=0;i<a.length;i++) {
       for (int j=0;j<a[0].length;j++) {
         c[i][j] = a[i][j] + b[i][j];
+        // loops through and adds each element
       }
     }
     Matrix C = new Matrix(c);
     System.out.println(C);
     return C;
+    // returns a new matrix as output
   }
+  
   
   public static Matrix subtract(Matrix A, Matrix B) {
     double[][] a = A.getMatrix();
     double[][] b = B.getMatrix();
     double[][] c = new double[a.length][a[0].length];
     
+    //loops through and subtracts elements
     for (int i=0;i<a.length;i++) {
       for (int j=0;j<a[0].length;j++) {
         c[i][j] = a[i][j] - b[i][j];
@@ -193,24 +243,77 @@ public class MatrixCalculator {
     
   }
   
-  public static Matrix dotProduct(Matrix A, Matrix B) {
+ 
+  public static Matrix multiply(Matrix A, Matrix B) {
     double[][] a = A.getMatrix();
     double[][] b = B.getMatrix();
     double[][] c = new double[a.length][b[0].length];
     
-    for (int i=0;i<a[0].length;i++) {
+    int countRow = 0;
+    int countCol = 0;
+    while (countRow<A.getRow()) {
+      double sum = 0;
       
-      for (int j=0;i<b.length;j++) {
-       c[i][j] = a[i][j]*b[j][i];  
+      double[] tempA = new double[a[0].length];
+      for (int i=0;i<a[0].length;i++) {
+        tempA[i] = a[countRow][i];
       }
-    }
+      // puts the row/column of the respective matrices into temporary double[]
+      
+      double[] tempB = new double[b.length];
+      for (int index=0;index<b.length;index++) {
+        tempB[index] = b[index][countCol];
+      }
+      
+      for(int i=0;i<tempA.length;i++) {
+        // To multiply two matrices, take dot products of each row times each column
+        sum = sum + tempA[i]*tempB[i]; 
+        // this takes 
+      }
+      c[countRow][countCol] = sum;
+      
+      if(countCol==B.getCol()-1) {
+        // If each row has been dot multiplied with each column, move on to the next row
+      countRow++;
+      countCol = 0;
+      } else {
+       countCol++; 
+      }
+      
+      }
+      
+    /** for (int i=count;i<a.length;i++) {
+      double sum = 0;
+      for (int j=0;j<a[0].length;j++) {
+        sum = sum + a[i][j]*b[j][i];
+      }
+      c[i][j] = sum;
+    } **/
+    
+    
     Matrix C = new Matrix(c);
     System.out.println(C);
     return C;
     
   }
   
-  public static void crossProduct(Matrix A, Matrix B) {
+  public static Matrix crossProduct(Matrix A, Matrix B) {
+    // only for [1;2;3] and [2,4,6]
+    double[][] a = A.getMatrix();
+    double[][] b = B.getMatrix();
+    double[][] c = new double[a.length][a[0].length];
+    //  a b
+    //0 1 5
+    //1 2 6
+    //2 3 7
+    
+    c[0][0] = (a[1][0]*b[2][0]-a[2][0]*b[1][0]);
+    c[1][0] = (-1)*(a[0][0]*b[2][0]-a[2][0]*b[0][0]);
+    c[2][0] = (a[0][0]*b[1][0]-a[1][0]*b[0][0]);
+    
+    Matrix C = new Matrix(c);
+    System.out.println(C);
+    return C;
     
   }
   
@@ -228,45 +331,75 @@ public class MatrixCalculator {
     return C;
   }
   
+  // Row reduce still doesn't work
+  
   public static void rowReduce(Matrix A) {
     /**
      [2 3 4]
      [5 6 7]
      **/
+    // First take k = [0][0]
+    // Multiply row 0 by 1/k
+    // If row 1 starts with "z", subtract z*row0 from row1
+    // Take k = [1][1]
+    // Multiply row 1 by 1/k
+    // If row 0 and all the other rows start with xyz, subtract xyz*row0 from rows
+    
     //you have an double[][] with [[2,3,4],[5,6,7]]
-    double[][] C = A.getMatrix();
+    
+    double[][] c = A.getMatrix();
     
     int rows = A.getRow();
     int cols = A.getCol();
     
     //THE MATRIX INVERSION ALGORITHM
-    int count = 0;
-    for (int j = 0;j<cols-1;j++) {
-      C[count][j] = C[count][j]/C[count][count];
-      //[1 3/2 2]
-      //[5 6 7]
+     
+    for (int count=0;count<rows;count++) {
+    double k = c[count][count];
+    c[count] = scalarM(c[count],(1/k));
+    // divide the first row by that
+    // so now this updates the first row by 1/k
     
     for (int i=0;i<rows;i++) {
       if (i==count) {
        continue; 
+        //Skip row reducing the row if it's the k row: it's the one we wanna keep
       }
-    for (int k=0;k<cols;k++) {
-     double x = C[i][j]/C[count][j]; 
-     C[i][k] = C[i][k] - (x*C[0][k]);
-     //[1 3/2 2]
-     //[0 -3/2 -3]
-    }
+      // Doesn't actually row reduce row 0; must change to everything EXCEPT if i==count then don't change it that round
+      for (int j=0;j<cols;j++) {
+        double z = c[i][count];
+        double[] temp = new double[c[i].length];
+        temp = scalarM(c[count],z);  //takes the k row and multiplies it
+        c[i] = subtractM(c[i],temp);
+      }   
     }
     
-    count++;
-    
     }
-    System.out.println(Arrays.deepToString(C));
+    Matrix C = new Matrix(c);
+    
+    System.out.println(C);
+    
+
         
   }
   
   
-                           
+  
+  public static double[] scalarM(double[] a, double s) {
+    double[] c = new double[a.length];
+    for (int i=0;i<c.length;i++) {
+     c[i] = a[i]*s; 
+    }
+    return c;
+  }
+   
+  public static double[] subtractM(double[] a, double[] b) {
+    double[] c = new double[a.length];
+    for (int i=0;i<a.length;i++) {
+      c[i] = a[i]-b[i];
+    }
+    return c;
+  }
   
   
   
