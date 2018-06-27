@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Matrix {
+// creates a Matrix object that countains a double[][] array, which is oriented [rows][cols] respectively
   
   private double[][] rows;
   private int row;
@@ -12,7 +13,7 @@ public class Matrix {
   
   public Matrix(double[][] r) {
     rows = new double[r.length][r[0].length];
-    
+    // populates the multiD array of the matrix
     for (int i=0;i<r.length;i++) {
       for (int j=0;j<r[0].length;j++) {
         rows[i][j] = r[i][j];
@@ -42,8 +43,22 @@ public class Matrix {
   }
   
  public String toString() {
-   String output = Arrays.deepToString(this.rows);
+   // Instead of printing an array, it prints the matrix in a rectangular manner
+   double[][] temp = this.getMatrix();
+   int row = this.getRow();
+   int col = this.getCol();
+   for (int i=0;i<row;i++) {
+     for (int j=0;j<col;j++) {
+      System.out.print(" " + temp[i][j]); 
+     }
+     System.out.println();
+   }
+  String output = Arrays.deepToString(this.rows);
    return output;
+   
+   // 1 2 3
+   // 4 5 6
+   
   }
   
 }
