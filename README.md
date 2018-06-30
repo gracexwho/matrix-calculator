@@ -7,7 +7,9 @@ Supports addition, subtraction, multiplication, cross multiplication, scalar mul
 User can input two matrices of any dimension in the format 1 2 3; 4 5 6; 7 8 9
 
 > 1 2 3
+
 > 4 5 6
+
 > 7 8 9
 
 Then input a certain command: "row reduce A". 
