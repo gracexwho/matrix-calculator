@@ -331,8 +331,6 @@ public class MatrixCalculator {
     return C;
   }
   
-  // Row reduce still doesn't work
-  
   public static void rowReduce(Matrix A) {
     /**
      [2 3 4]
@@ -373,17 +371,11 @@ public class MatrixCalculator {
         c[i] = subtractM(c[i],temp);
       }   
     }
-    
     }
     Matrix C = new Matrix(c);
     
     System.out.println(C);
-    
-
-        
   }
-  
-  
   
   public static double[] scalarM(double[] a, double s) {
     double[] c = new double[a.length];
@@ -399,9 +391,6 @@ public class MatrixCalculator {
       c[i] = a[i]-b[i];
     }
     return c;
-  }
-  
-  
-  
+  } 
   
 }
